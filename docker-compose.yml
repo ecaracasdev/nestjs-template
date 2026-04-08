@@ -1,12 +1,11 @@
-# version: '3.8'
 services:
   app:
     image: mcr.microsoft.com/devcontainers/typescript-node:0-18  
     command: sleep infinity   
     volumes:
-      - .:/workspaces/nestjs-interview
+      - .:/workspaces/nestjs-template
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
