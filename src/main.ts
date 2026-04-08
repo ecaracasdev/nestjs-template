@@ -7,8 +7,9 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { logger } from './common/logger/logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: false, // desactiva logger de Nest
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
