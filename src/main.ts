@@ -8,7 +8,14 @@ import { logger } from './common/logger/logger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: false, // desactiva logger de Nest
+    // En lugar de false, usa un objeto que mapee los métodos de Nest a Pino
+    logger: {
+      log: (msg) => logger.info(msg),
+      error: (msg, trace) => logger.error({ msg, trace }),
+      warn: (msg) => logger.warn(msg),
+      debug: (msg) => logger.debug(msg),
+      verbose: (msg) => logger.trace(msg),
+    },
   });
 
   app.enableCors({
@@ -26,7 +33,6 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new LoggingInterceptor());
 
   await app.listen(3000);
   logger.info('Application is running on http://localhost:3000');

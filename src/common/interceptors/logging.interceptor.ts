@@ -1,15 +1,19 @@
 // logging.interceptor.ts
 import {
-  CallHandler,
-  ExecutionContext,
   Injectable,
   NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Inject,
 } from '@nestjs/common';
+import { Logger } from 'pino'; // Solo para tipado
 import { Observable, tap, catchError, throwError } from 'rxjs';
-import { logger } from '../logger/logger';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
+  // Nest se encarga de pasarte la instancia aquí
+  constructor(@Inject('LOGGER') private readonly logger: Logger) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
     const { method, url } = req;
@@ -18,7 +22,8 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const res = context.switchToHttp().getResponse();
-        logger.info({
+        this.logger.info({
+          // Ahora usas "this.logger"
           message: 'Request completed',
           method,
           url,
@@ -27,7 +32,7 @@ export class LoggingInterceptor implements NestInterceptor {
         });
       }),
       catchError((err) => {
-        logger.error({
+        this.logger.error({
           message: 'Request failed',
           method,
           url,

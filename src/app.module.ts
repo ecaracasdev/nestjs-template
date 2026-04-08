@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TodoListsModule } from './todo_lists/todo_lists.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TodoList } from './todo_lists/todo_list.entity';
 import { ConfigModule } from '@nestjs/config';
+import { HealthController } from './health/health.controller';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { LoggerModule } from './common/logger/logger.module';
 
 @Module({
   imports: [
@@ -21,8 +25,14 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
       logging: true,
     }),
+    LoggerModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor, // Así Nest inyecta las dependencias del interceptor
+    },
+  ],
 })
 export class AppModule {}
