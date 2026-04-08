@@ -10,6 +10,13 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: false, // desactiva logger de Nest
   });
+
+  app.enableCors({
+    origin: '*', // Allow all origins
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow specific HTTP methods
+    allowedHeaders: 'Content-Type, Accept', // Allow specific headers
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
